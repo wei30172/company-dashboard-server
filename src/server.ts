@@ -3,8 +3,7 @@ import http from "http";
 import mongoose from "mongoose";
 import { config } from "./config/config";
 import Logging from "./library/Logging";
-import userRoutes from "./routes/User";
-import taskRoutes from "./routes/Task";
+import { userRoutes, taskRoutes, productRoutes, orderRoutes } from "./routes";
 
 const router = express();
 
@@ -52,6 +51,8 @@ const StartServer = () => {
   /** Routes */
   router.use("/users", userRoutes);
   router.use("/tasks", taskRoutes);
+  router.use("/products", productRoutes);
+  router.use("/orders", orderRoutes);
 
   /** Healthcheck */
   router.get("/ping", (req, res, next) => res.status(200).json({ message: "pong" }));

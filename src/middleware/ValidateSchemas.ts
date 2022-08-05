@@ -1,7 +1,9 @@
-import Joi, { ObjectSchema } from "joi";
+import Joi, { ObjectSchema, string } from "joi";
 import { NextFunction, Request, Response } from "express";
 import { IUser } from "../models/User";
 import { ITask } from "../models/Task";
+import { IProduct } from "../models/Product";
+import { IOrder } from "../models/Order";
 import Logging from "../library/Logging";
 
 export const ValidateSchemas = (schema: ObjectSchema) => {
@@ -21,11 +23,13 @@ export const ValidateSchemas = (schema: ObjectSchema) => {
 export const Schemas = {
   user: {
     create: Joi.object<IUser>({
+      role: Joi.string().required(),
       name: Joi.string().required(),
       email: Joi.string().required(),
       password: Joi.string().required(),
     }),
     update: Joi.object<IUser>({
+      role: Joi.string().required(),
       name: Joi.string().required(),
       email: Joi.string().required(),
       password: Joi.string().required(),
@@ -45,6 +49,44 @@ export const Schemas = {
         .required(),
       title: Joi.string().required(),
       completed: Joi.boolean().required(),
+    }),
+  },
+  product: {
+    create: Joi.object<IProduct>({
+      title: Joi.string().required(),
+      image: Joi.string().required(),
+      description: Joi.string().required(),
+      price: Joi.number().required(),
+      availableSizes: Joi.array().required(),
+    }),
+    update: Joi.object<IProduct>({
+      title: Joi.string().required(),
+      image: Joi.string().required(),
+      description: Joi.string().required(),
+      price: Joi.number().required(),
+      availableSizes: Joi.array().required(),
+    }),
+  },
+  order: {
+    create: Joi.object<IOrder>({
+      user: Joi.string()
+        .regex(/^[0-9a-fA-F]{24}$/)
+        .required(),
+      name: Joi.string().required(),
+      phone: Joi.string().required(),
+      address: Joi.string().required(),
+      total: Joi.string().required(),
+      cartItems: Joi.array().required(),
+    }),
+    update: Joi.object<IOrder>({
+      user: Joi.string()
+        .regex(/^[0-9a-fA-F]{24}$/)
+        .required(),
+      name: Joi.string().required(),
+      phone: Joi.string().required(),
+      address: Joi.string().required(),
+      total: Joi.string().required(),
+      cartItems: Joi.array().required(),
     }),
   },
 };
