@@ -10,6 +10,10 @@ Install [Node.js](https://nodejs.org/en/).
 
 ### `yarn install` (or `npm install`)
 
+### Install nodemon
+
+Install [nodemon](https://www.npmjs.com/package//nodemon).
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -24,11 +28,11 @@ You will also see any lint errors in the console.
 
 ### `yarn build` (or `npm run build`)
 
-Builds the server for production to the `build` folder.\
+Builds the server for production to the `build` folder.
 
 ### `yarn start` (or `npm run start`)
 
-Runs node on build/server.js.
+Runs node on `build/server.js`.
 
 ### `yarn prettier` (or `npm run prettier`)
 
