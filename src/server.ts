@@ -3,7 +3,7 @@ import http from "http";
 import mongoose from "mongoose";
 import { config } from "./config/config";
 import Logging from "./library/Logging";
-import { userRoutes, taskRoutes, productRoutes, orderRoutes } from "./routes";
+import { authRoutes, userRoutes, taskRoutes, productRoutes, orderRoutes } from "./routes";
 
 const router = express();
 
@@ -49,6 +49,7 @@ const StartServer = () => {
   });
 
   /** Routes */
+  router.use("/auth", authRoutes);
   router.use("/users", userRoutes);
   router.use("/tasks", taskRoutes);
   router.use("/products", productRoutes);

@@ -1,3 +1,4 @@
+export { default as authRoutes } from "./Auth";
 export { default as userRoutes } from "./User";
 export { default as taskRoutes } from "./Task";
 export { default as productRoutes } from "./Product";
