@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 import { config } from "./config/config";
 import Logging from "./library/Logging";
 import { authRoutes, userRoutes, taskRoutes, productRoutes, orderRoutes } from "./routes";
@@ -32,8 +33,12 @@ const StartServer = () => {
     next();
   });
 
+  // built-in middleware to handle urlencoded form data
   router.use(express.urlencoded({ extended: true }));
+  // built-in middleware for json
   router.use(express.json());
+  // middleware for cookies
+  router.use(cookieParser());
 
   /** Rules of API */
   router.use((req, res, next) => {
@@ -50,6 +55,7 @@ const StartServer = () => {
 
   /** Routes */
   router.use("/auth", authRoutes);
+  // router.use(VerifyJWT);
   router.use("/users", userRoutes);
   router.use("/tasks", taskRoutes);
   router.use("/products", productRoutes);

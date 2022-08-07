@@ -9,9 +9,9 @@ const VerifyJWT = (req: Request, res: Response, next: NextFunction) => {
   let token = req.headers.authorization?.split(" ")[1];
 
   if (token) {
-    jwt.verify(token, config.server.token.secret, (error, decoded) => {
+    jwt.verify(token, config.server.token.accessSecret, (error, decoded) => {
       if (error) {
-        return res.status(404).json({ error });
+        return res.status(403).json({ error }); //invalid token
       } else {
         res.locals.jwt = decoded;
         next();

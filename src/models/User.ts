@@ -5,6 +5,15 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
+  refreshToken: string;
+}
+
+export interface IRegisterUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export interface IUserModel extends IUser, Document {}
@@ -15,6 +24,7 @@ const UserSchema: Schema = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    refreshToken: { type: String },
   },
   {
     timestamps: true,

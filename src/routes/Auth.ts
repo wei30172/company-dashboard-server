@@ -6,7 +6,9 @@ import VerifyJWT from "../middleware/VerifyJWT";
 const router = express.Router();
 
 router.post("/validate", VerifyJWT, controller.validateToken);
-router.post("/register", ValidateSchemas(Schemas.user.create), controller.register);
-router.post("/login", controller.login);
+router.post("/register", ValidateSchemas(Schemas.auth.register), controller.register);
+router.post("/login", ValidateSchemas(Schemas.auth.login), controller.login);
+router.get("/logout", controller.logout);
+router.get("/refreshToken", controller.refreshToken);
 
 export = router;

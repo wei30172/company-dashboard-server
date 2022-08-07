@@ -3,33 +3,39 @@ import { config } from "../config/config";
 import Logging from "../library/Logging";
 import { IUser } from "../models/User";
 
-const signJWT = (user: IUser, callback: (error: Error | null, token: string | null) => void): void => {
-  Logging.info(`Attempting to sign token for ${user.email}`);
+export const getAccessToken = (user: IUser) => {
+  Logging.info(`Attempting to get access token for ${user.email}`);
 
-  try {
-    jwt.sign(
-      {
-        name: user.name,
-        email: user.email,
-      },
-      config.server.token.secret,
-      {
-        issuer: config.server.token.issuer,
-        algorithm: "HS256",
-        expiresIn: config.server.token.expireTime,
-      },
-      (error, token) => {
-        if (error) {
-          callback(error, null);
-        } else if (token) {
-          callback(null, token);
-        }
-      },
-    );
-  } catch (error) {
-    Logging.error(error);
-    callback(error as Error, null);
-  }
+  const accessToken = jwt.sign(
+    {
+      name: user.name,
+      email: user.email,
+    },
+    config.server.token.accessSecret,
+    {
+      issuer: config.server.token.issuer,
+      algorithm: "HS256",
+      expiresIn: "60s",
+    },
+  );
+
+  return accessToken;
 };
 
-export default signJWT;
+export const getRefreshToken = (user: IUser) => {
+  Logging.info(`Attempting to get refresh token  for ${user.email}`);
+
+  const refreshToken = jwt.sign(
+    {
+      email: user.email,
+    },
+    config.server.token.refreshSecret,
+    {
+      issuer: config.server.token.issuer,
+      algorithm: "HS256",
+      expiresIn: "1d",
+    },
+  );
+
+  return refreshToken;
+};

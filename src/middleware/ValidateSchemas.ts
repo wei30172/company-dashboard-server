@@ -1,6 +1,6 @@
 import Joi, { ObjectSchema, string } from "joi";
 import { NextFunction, Request, Response } from "express";
-import { IUser } from "../models/User";
+import { IUser, IRegisterUser } from "../models/User";
 import { ITask } from "../models/Task";
 import { IProduct } from "../models/Product";
 import { IOrder } from "../models/Order";
@@ -21,18 +21,23 @@ export const ValidateSchemas = (schema: ObjectSchema) => {
 };
 
 export const Schemas = {
-  user: {
-    create: Joi.object<IUser>({
-      role: Joi.string().required(),
-      name: Joi.string().required(),
+  auth: {
+    register: Joi.object<IRegisterUser>({
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      email: Joi.string().required(),
+      password: Joi.string().required(),
+      confirmPassword: Joi.string().required(),
+    }),
+    login: Joi.object<IUser>({
       email: Joi.string().required(),
       password: Joi.string().required(),
     }),
+  },
+  user: {
     update: Joi.object<IUser>({
-      role: Joi.string().required(),
       name: Joi.string().required(),
       email: Joi.string().required(),
-      password: Joi.string().required(),
     }),
   },
   task: {
