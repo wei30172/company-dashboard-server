@@ -3,7 +3,18 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import Logging from "../library/Logging";
 
-const VerifyJWT = (req: Request, res: Response, next: NextFunction) => {
+export interface IDecode {
+  email: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
+
+export interface RequestWithUserRole extends Request {
+  user?: IDecode;
+}
+
+const VerifyJWT = (req: RequestWithUserRole, res: Response, next: NextFunction) => {
   Logging.info("Validating token");
 
   let token = req.headers.authorization?.split(" ")[1];
@@ -13,7 +24,8 @@ const VerifyJWT = (req: Request, res: Response, next: NextFunction) => {
       if (error) {
         return res.status(403).json({ error }); //invalid token
       } else {
-        res.locals.jwt = decoded;
+        const decodedData = <IDecode>decoded;
+        req.user = decodedData;
         next();
       }
     });

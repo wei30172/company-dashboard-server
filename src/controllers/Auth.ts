@@ -5,6 +5,7 @@ import bcryptjs from "bcryptjs";
 import User from "../models/User";
 import Logging from "../library/Logging";
 import { config } from "../config/config";
+import { ROLES } from "../config/rolesList";
 import { getAccessToken, getRefreshToken } from "../utils/signJWT";
 
 const validateToken = (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +15,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   let { firstName, lastName, email, password, confirmPassword } = req.body;
-  const role = "USER";
+  const role = ROLES.USER;
 
   if (password !== confirmPassword) return res.status(400).json({ message: "Passwords don't match" });
 

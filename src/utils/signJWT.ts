@@ -8,8 +8,8 @@ export const getAccessToken = (user: IUser) => {
 
   const accessToken = jwt.sign(
     {
-      name: user.name,
       email: user.email,
+      role: user.role,
     },
     config.server.token.accessSecret,
     {

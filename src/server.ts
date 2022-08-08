@@ -6,6 +6,7 @@ import { config } from "./config/config";
 import Logging from "./library/Logging";
 import Credentials from "./middleware/Credentials";
 import { authRoutes, userRoutes, taskRoutes, productRoutes, orderRoutes } from "./routes";
+import VerifyJWT from "./middleware/VerifyJWT";
 
 const router = express();
 
@@ -62,7 +63,7 @@ const StartServer = () => {
 
   /** Routes */
   router.use("/auth", authRoutes);
-  // router.use(VerifyJWT);
+  router.use(VerifyJWT);
   router.use("/users", userRoutes);
   router.use("/tasks", taskRoutes);
   router.use("/products", productRoutes);
