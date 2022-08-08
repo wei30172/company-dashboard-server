@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import { config } from "./config/config";
 import Logging from "./library/Logging";
+import Credentials from "./middleware/Credentials";
 import { authRoutes, userRoutes, taskRoutes, productRoutes, orderRoutes } from "./routes";
 
 const router = express();
@@ -33,10 +34,16 @@ const StartServer = () => {
     next();
   });
 
+  // Handle options credentials check - before CORS!
+  // add cookies credentials requirement
+  router.use(Credentials);
+
   // built-in middleware to handle urlencoded form data
   router.use(express.urlencoded({ extended: true }));
+
   // built-in middleware for json
   router.use(express.json());
+
   // middleware for cookies
   router.use(cookieParser());
 

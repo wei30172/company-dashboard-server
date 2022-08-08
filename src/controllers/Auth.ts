@@ -61,6 +61,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const refreshToken = getRefreshToken(foundUser);
         res.cookie("jwt", refreshToken, {
           httpOnly: true,
+          // secure: true,
+          sameSite: true,
           maxAge: 24 * 60 * 60 * 1000, // 1day
         });
 
@@ -77,7 +79,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(401).json({ message: "Unauthorized, That password is incorrect" });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
   }
 };
@@ -89,32 +90,39 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   const refreshToken = cookies.jwt;
 
   // Is refreshToken in db?
-  const foundUser = await User.findOne({ refreshToken }).exec();
-  if (!foundUser) {
+  try {
+    const foundUser = await User.findOne({ refreshToken }).exec();
+    if (!foundUser) {
+      res.clearCookie("jwt", {
+        httpOnly: true,
+        // secure: true,
+        sameSite: true,
+      });
+      return res.sendStatus(204);
+    }
+
+    // Delete refreshToken in db
     res.clearCookie("jwt", {
       httpOnly: true,
-      secure: true,
-      // sameSite: "None",
+      // secure: true,
+      sameSite: true,
     });
-    return res.sendStatus(204);
+    foundUser.set({ ...foundUser, refreshToken: "" });
+    foundUser.save().then((user) =>
+      res.status(201).json({
+        message: "Logout successfully",
+        refreshToken: user.refreshToken,
+      }),
+    );
+  } catch (error) {
+    res.status(500).json({ error });
   }
-
-  // Delete refreshToken in db
-  foundUser.set({ ...foundUser, refreshToken: "" });
-  foundUser.save().then((user) => console.log(user));
-
-  res.clearCookie("jwt", {
-    httpOnly: true,
-    secure: true,
-    // sameSite: "None",
-  });
-  res.sendStatus(204);
 };
 
 const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(401);
-  console.log(cookies.jwt);
+  // console.log(cookies.jwt);
   const refreshToken = cookies.jwt;
 
   // evaluate jwt
@@ -133,8 +141,6 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction) => 
             accessToken,
           });
         }
-        res.locals.jwt = decoded;
-        next();
       }
     });
   } else {
