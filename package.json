@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc",
+    "postinstall": "tsc",
     "start": "node build/server.js",
     "prettier": "prettier --config .prettierrc \"src/**/*.{js,jsx,ts,tsx}\" --write"
   },
