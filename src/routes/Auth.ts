@@ -1,14 +1,12 @@
 import express from "express";
-import controller from "../controllers/Auth";
+import { register, login, logout, refreshToken } from "../controllers/Auth/index";
 import { Schemas, ValidateSchemas } from "../middleware/ValidateSchemas";
-import VerifyJWT from "../middleware/VerifyJWT";
 
 const router = express.Router();
 
-router.get("/validate", VerifyJWT, controller.validateToken);
-router.post("/register", ValidateSchemas(Schemas.auth.register), controller.register);
-router.post("/login", ValidateSchemas(Schemas.auth.login), controller.login);
-router.get("/logout", controller.logout);
-router.get("/refreshToken", controller.refreshToken);
+router.post("/register", ValidateSchemas(Schemas.auth.register), register);
+router.post("/login", ValidateSchemas(Schemas.auth.login), login);
+router.get("/logout", logout);
+router.get("/refreshToken", refreshToken);
 
 export = router;
