@@ -36,7 +36,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       role,
     });
 
-    return user.save().then((user) => res.status(201).json({ user }));
+    return user.save().then(() => res.status(201).json({ message: "Register Successfully!" }));
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -62,7 +62,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const refreshToken = getRefreshToken(foundUser);
         res.cookie("jwt", refreshToken, {
           httpOnly: true,
-          // secure: true,
+          secure: true,
           sameSite: true,
           maxAge: 24 * 60 * 60 * 1000, // 1day
         });
@@ -70,9 +70,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         foundUser.set({ ...foundUser, refreshToken });
         foundUser.save().then((user) =>
           res.status(201).json({
-            message: "Authorized successfully",
             accessToken,
-            user,
+            user: {
+              role: user.role,
+              name: user.name,
+              email: user.email,
+            },
           }),
         );
       }
@@ -96,25 +99,22 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     if (!foundUser) {
       res.clearCookie("jwt", {
         httpOnly: true,
-        // secure: true,
+        secure: true,
         sameSite: true,
       });
       return res.sendStatus(204);
     }
 
     // Delete refreshToken in db
+    foundUser.set({ ...foundUser, refreshToken: "" });
+    const user = await foundUser.save();
+
     res.clearCookie("jwt", {
       httpOnly: true,
-      // secure: true,
+      secure: true,
       sameSite: true,
     });
-    foundUser.set({ ...foundUser, refreshToken: "" });
-    foundUser.save().then((user) =>
-      res.status(201).json({
-        message: "Logout successfully",
-        refreshToken: user.refreshToken,
-      }),
-    );
+    res.sendStatus(204);
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -138,8 +138,12 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction) => 
         const accessToken = getAccessToken(foundUser);
         if (accessToken) {
           res.status(200).json({
-            message: "RefreshToken successfully",
             accessToken,
+            user: {
+              role: foundUser.role,
+              name: foundUser.name,
+              email: foundUser.email,
+            },
           });
         }
       }
